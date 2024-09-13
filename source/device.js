@@ -318,6 +318,9 @@ class Device extends EventEmitter {
             const mapped = [];
             for (const pdo of eds.getTransmitPdos()) {
 
+                if (!args.id)
+                    throw new ReferenceError('id required to map PDO');
+
                 const dataObjects = [];
                 for (let obj of pdo.dataObjects) {
                     // Find the next open SDO index
@@ -354,6 +357,7 @@ class Device extends EventEmitter {
                 }
 
                 pdo.dataObjects = dataObjects;
+                pdo.cobId = (pdo.cobId & ~0x7F) | args.id;
                 this.eds.addReceivePdo(pdo);
             }
         }
